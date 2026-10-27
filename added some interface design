@@ -1,0 +1,402 @@
+import java.text.DecimalFormat;
+import java.util.Scanner;
+
+public class ElectricBillComputation {
+    public static void main(String[] args) {
+
+        Scanner scanner = new Scanner(System.in);
+
+        char returnedAnswer = '1', returnedAnswerRightChoice = 'R', returnedAnswerRightChoice2 = 'C', returnedAnswerRightChoice3 = 'I'; // returnAnswerRightChoiceX are hard bound variables containing right answers, overwritten only when input is valid.
+        char customerType = '1', customerTypeUsageRange = '1', customerTypePhase = '1'; double fixedCharge = 0; // dummies to comply with wrongInput. overwritten later
+
+        System.out.println("\nWelcome to ComeRal!");
+        whatCustomer(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, scanner, customerType, customerTypePhase, customerTypeUsageRange, fixedCharge);
+    } // Method bracket for main
+
+    static void whatCustomer (char returnedAnswer, char returnedAnswerRightChoice, char returnedAnswerRightChoice2, char returnedAnswerRightChoice3, Scanner scanner, char customerType, char customerTypePhase, char customerTypeUsageRange, double fixedCharge) {
+
+        System.out.print("\nWhat type of Customer are you? \n\n[R]Residential\n[C]Commercial\n[I]Industrial\n----------------------\nEnter your answer:  ");
+        
+        returnedAnswer = scanner.nextLine().charAt(0);
+        returnedAnswer = Character.toUpperCase(returnedAnswer);
+        customerType = returnedAnswer;
+        if (returnedAnswer == returnedAnswerRightChoice || returnedAnswer == returnedAnswerRightChoice2 || returnedAnswer == returnedAnswerRightChoice3) {
+            whatPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+        }
+        else {
+            wrongInput(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, scanner, customerType, customerTypePhase, customerTypeUsageRange, fixedCharge);
+        }
+
+    }
+    static void whatPhase (char returnedAnswer, Scanner scanner, char customerType, char customerTypeUsageRange) {
+
+        System.out.print("\nWhat is your connection type?\n[S]Single Phase\n[T]Three Phase\n---------------------\nEnter your answer:  ");
+        returnedAnswer = scanner.nextLine().charAt(0);
+        returnedAnswer = Character.toUpperCase(returnedAnswer);
+        answerPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+
+    }
+
+    static void answerPhase (char returnedAnswer, Scanner scanner, char customerType, char customerTypeUsageRange) {
+
+        char returnedAnswerRightChoice = 'S', returnedAnswerRightChoice2 = 'T', returnedAnswerRightChoice3 = '~', customerTypePhase;
+        customerTypePhase = returnedAnswer;
+        double fixedCharge = 0;
+
+        if (returnedAnswer != returnedAnswerRightChoice && returnedAnswer != returnedAnswerRightChoice2) {
+            wrongInput(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, scanner, customerType, customerTypePhase, customerTypeUsageRange, fixedCharge);
+        }
+        else {
+            if (returnedAnswer == returnedAnswerRightChoice) {
+                fixedCharge = 100.00;
+            }
+            else {
+                fixedCharge = 250.00;
+            }
+            usageRange(returnedAnswer, scanner, customerType, customerTypePhase, fixedCharge);
+        }
+    } // Method bracket for answerPhase
+
+    static void usageRange (char returnedAnswer, Scanner scanner, char customerType, char customerTypePhase, double fixedCharge) {
+
+        char returnedAnswerRightChoice = '1', returnedAnswerRightChoice2 = '2', returnedAnswerRightChoice3 = '3', customerTypeUsageRange;
+
+        System.out.print("\nWhat is your usage range?\n[1] 1 - 100\n[2] 101 - 300\n[3] Above 300\n----------------------\nEnter your answer:  ");
+        returnedAnswer = scanner.nextLine().charAt(0);
+        customerTypeUsageRange = returnedAnswer;
+        answerRange(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, customerType, customerTypePhase, customerTypeUsageRange, scanner, fixedCharge);
+    }
+    static void answerRange (char returnedAnswer, char returnedAnswerRightChoice, char returnedAnswerRightChoice2, char returnedAnswerRightChoice3, char customerType, char customerTypePhase, char customerTypeUsageRange, Scanner scanner, double fixedCharge) {
+
+        double answerKWH = 0, previousAnswerKWH = 0;
+        int tryCounter = 0;
+        char retryConfirm;
+
+            if (returnedAnswer == returnedAnswerRightChoice) {
+                System.out.print("\nHow much kWh do you use between 1 - 100?\nEnter your answer:  ");
+                answerKWH = scanner.nextDouble();
+                if (answerKWH < 1 || answerKWH > 100) {
+                    do {
+                        if (answerKWH < 1) {
+                            System.out.print("Please enter a value that is above 0 kWh.\nEnter your answer:  ");
+                        } else {
+                            System.out.print("Please enter a value that is at most 100 kWh.\nEnter your answer:  ");
+                        }
+                        answerKWH = scanner.nextDouble();
+                        tryCounter++;
+                    } while ((answerKWH < 1 || answerKWH > 100) && tryCounter < 5);
+                }
+            } else if (returnedAnswer == returnedAnswerRightChoice2) {
+                System.out.print("How much kWh do you use between 101 - 300?\nEnter your answer:  ");
+                answerKWH = scanner.nextDouble();
+                if (answerKWH < 101 || answerKWH > 300) {
+                    do {
+                        if (answerKWH < 101) {
+                            System.out.print("Please enter a value that is above 100 kWh.\nEnter your answer:  ");
+                        } else {
+                            System.out.print("Please enter a value that is at most 300 kWh.\nEnter your answer:  ");
+                        }
+                        answerKWH = scanner.nextDouble();
+                        tryCounter++;
+                    } while ((answerKWH < 101 || answerKWH > 300) && tryCounter < 5);
+                }
+            } else if (returnedAnswer == returnedAnswerRightChoice3) {
+                System.out.print("How much kWh do you use above 300?\nEnter your answer:  ");
+                answerKWH = scanner.nextDouble();
+                if (answerKWH < 301) {
+                    do {
+                        System.out.print("Please enter a value that is above 300 kWh.\nEnter your answer:  ");
+                        answerKWH = scanner.nextDouble();
+                        tryCounter++;
+                    } while (answerKWH < 301 && tryCounter < 5);
+                }
+            } else {
+                wrongInput(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, scanner, customerType, customerTypePhase, customerTypeUsageRange, fixedCharge);
+            }
+
+            if ((answerKWH > 1 && answerKWH <= 100) || (answerKWH >= 101 && answerKWH <= 300) || (answerKWH > 300)) {
+                tryCounter = 0;
+            }
+
+            scanner.nextLine();
+            if (tryCounter == 5) {
+                tryCounter = 0;
+                do {
+                    System.out.print("Too many consecutive failed attempts in a row. Do you wish to input your kWh again? Y/N?\nOptionally, you can also return to input a new usage range by returning the letter U.\nEnter your answer:  ");
+                    retryConfirm = scanner.nextLine().charAt(0);
+                    retryConfirm = Character.toUpperCase(retryConfirm);
+                    tryCounter++;
+                } while (retryConfirm != 'Y' && retryConfirm != 'N' && retryConfirm != 'U' && tryCounter < 5);
+
+                if (tryCounter == 5) {
+                    System.out.println("\nForcefully aborting due to multiple consecutive failed attempts..");
+                    exitMethod(scanner);
+                    return;
+                }
+                else {
+                    if (retryConfirm == 'Y') {
+                        answerRange(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, customerType, customerTypePhase, customerTypeUsageRange, scanner, fixedCharge);
+                    }
+                    else if (retryConfirm == 'U') {
+                        usageRange(returnedAnswer, scanner, customerType, customerTypePhase, fixedCharge);
+                    }
+                    else {
+                        exitMethod(scanner);
+                        return;
+                    }
+                }
+            }
+            else {
+                tryCounter = 0;
+                System.out.print("\nWhat is your previous kWh reading? It must not be over your present reading.\nEnter your answer:  ");
+                previousAnswerKWH = scanner.nextDouble();
+                if (answerKWH < 101) {
+                    if (previousAnswerKWH > answerKWH || previousAnswerKWH < 0) {
+                        do {
+                            if (previousAnswerKWH > answerKWH) {
+                                System.out.println("\nPlease enter your right kWh reading that is not over your present reading.\nPresent reading:  " + answerKWH);
+                            }
+                            else if (previousAnswerKWH < 0) {
+                                System.out.println("\nPlease enter your right kWh reading that is not below 0.\nPresent reading:  " + answerKWH);
+                            }
+                            System.out.print("Enter your answer:  ");
+                            previousAnswerKWH = scanner.nextDouble();
+                            tryCounter++;
+                        } while ((previousAnswerKWH > answerKWH || previousAnswerKWH < 0) && tryCounter < 5);
+                    }
+                }
+                else if (answerKWH < 301) {
+                    if (previousAnswerKWH > answerKWH || previousAnswerKWH < 0) {
+                        do {
+                            if (previousAnswerKWH > answerKWH) {
+                                System.out.println("\nPlease enter your right kWh reading that is not over your present reading.\nPresent reading:  " + answerKWH);
+                            }
+                            else if (previousAnswerKWH < 0) {
+                                System.out.println("\nPlease enter your right kWh reading that is not below 0.\nPresent reading:  " + answerKWH);
+                            }
+                            System.out.print("Enter your answer:  ");
+                            previousAnswerKWH = scanner.nextDouble();
+                            tryCounter++;
+                        } while ((previousAnswerKWH > answerKWH || previousAnswerKWH < 0) && tryCounter < 5);
+                    }
+                }
+                else {
+                    if (previousAnswerKWH > answerKWH || previousAnswerKWH < 0) {
+                        do {
+                            if (previousAnswerKWH > answerKWH) {
+                                System.out.println("\nPlease enter your right kWh reading that is not over your present reading.\nPresent reading:  " + answerKWH);
+                            }
+                            else if (previousAnswerKWH < 0) {
+                                System.out.println("\nPlease enter your right kWh reading that is not below 0.\nPresent reading:  " + answerKWH);
+                            }
+                            System.out.print("Enter your answer:  ");
+                            previousAnswerKWH = scanner.nextDouble();
+                            tryCounter++;
+                        } while ((previousAnswerKWH > answerKWH || previousAnswerKWH < 0) && tryCounter < 5);
+                    }
+                }
+            }
+            scanner.nextLine();
+            if (previousAnswerKWH < answerKWH && previousAnswerKWH >= 0) {
+                tryCounter = 0;
+            }
+
+            if (tryCounter == 5) {
+                tryCounter = 0;
+                do {
+                    System.out.print("\nToo many consecutive failed attempts in a row. Do you wish to restart and input your usage category again? Y/N?\nOptionally, you may also press K to enter your kWh usage.\nEnter your answer:  ");
+                    retryConfirm = scanner.nextLine().charAt(0);
+                    retryConfirm = Character.toUpperCase(retryConfirm);
+                    tryCounter++;
+                } while (retryConfirm != 'Y' && retryConfirm != 'N' && retryConfirm != 'K' && tryCounter < 5);
+
+                if (tryCounter == 5) {
+                    System.out.println("\nForcefully aborting due to multiple consecutive failed attempts..");
+                    exitMethod(scanner);
+                }
+                else {
+                    if (retryConfirm == 'Y') {
+                        usageRange(returnedAnswer, scanner, customerType, customerTypePhase, fixedCharge);
+                    }
+                    else if (retryConfirm == 'K') {
+                        answerRange(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, customerType, customerTypePhase, customerTypeUsageRange, scanner, fixedCharge);
+                    }
+                    else {
+                        exitMethod(scanner);
+                    }
+                }
+            }
+            else {
+                computationProcess(customerTypeUsageRange, answerKWH, previousAnswerKWH, returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, customerType, scanner, customerTypePhase, fixedCharge);
+            }
+    } // Method end for answerRange
+    static void computationProcess (char customerTypeUsageRange, double answerKWH, double previousAnswerKWH, char returnedAnswer, char returnedAnswerRightChoice, char returnedAnswerRightChoice2, char returnedAnswerRightChoice3, char customerType, Scanner scanner, char customerTypePhase, double fixedCharge) {
+
+        DecimalFormat decimalFormat = new DecimalFormat("0.00"); // transfer to another method
+        double vaTax = 0.12, energyCharge, consumedKWH, totalBill, ratePerKWH, vaTaxTotal;
+        char pesos = '₱';
+
+        if (returnedAnswer == returnedAnswerRightChoice) {
+            ratePerKWH = 10.00;
+        }
+        else if (returnedAnswer == returnedAnswerRightChoice2) {
+            ratePerKWH = 12.00;
+        }
+        else {
+            ratePerKWH = 15.00;
+        }
+
+        consumedKWH = answerKWH - previousAnswerKWH;
+        System.out.println("\nYour consumed kWh is:  " + decimalFormat.format(consumedKWH));
+        energyCharge = answerKWH * ratePerKWH;
+        System.out.println("Your energy charge is:  " + pesos + decimalFormat.format(energyCharge));
+        vaTaxTotal = vaTax * (energyCharge + fixedCharge);
+        System.out.println("Your Value Added Tax (VAT) is:  " + pesos + decimalFormat.format(vaTaxTotal));
+        totalBill = energyCharge + fixedCharge + vaTaxTotal;
+        System.out.println("Your total bill is:  " + pesos + decimalFormat.format(totalBill));
+        tryAgain(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+
+    }
+    static void tryAgain (char returnedAnswer, Scanner scanner, char customerType, char customerTypeUsageRange) {
+        System.out.print("\nWould you like to:\n[1]Try Again and input a new value\n[2]Start Over\n[3]Exit?\n\nEnter your answer:  ");
+        returnedAnswer = scanner.nextLine().charAt(0);
+        returnedAnswer = Character.toUpperCase(returnedAnswer);
+        switch (returnedAnswer) {
+            case '1':
+                whatPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+                break;
+            case '2':
+                main(new String[0]);
+                break;
+            case '3':
+                exitMethod(scanner);
+                break;
+            default:
+                int tryCounter = 0;
+                do {
+                    System.out.print("You have entered an invalid choice. Please input the correct choice and try again:  ");
+                    returnedAnswer = scanner.nextLine().charAt(0);
+                    returnedAnswer = Character.toUpperCase(returnedAnswer);
+                    tryCounter++;
+                } while (returnedAnswer != '1' && returnedAnswer != '2' && returnedAnswer != '3' && tryCounter < 5);
+
+                if (tryCounter == 5) {
+                    System.out.println("\nForcefully aborting due to multiple consecutive failed attempts..");
+                    exitMethod(scanner);
+                }
+                else {
+                    switch (returnedAnswer) {
+                        case '1':
+                            whatPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+                            break;
+                        case '2':
+                            main(new String[0]);
+                            break;
+                        case '3':
+                            exitMethod(scanner);
+                            break;
+                    }
+                }
+        }
+    }
+    static void wrongInput(char returnedAnswer, char returnedAnswerRightChoice, char returnedAnswerRightChoice2, char returnedAnswerRightChoice3, Scanner scanner, char customerType, char customerTypePhase, char customerTypeUsageRange, double fixedCharge) {
+
+        char retryConfirm;
+        int tryCounter = 0;
+
+        if (returnedAnswerRightChoice3 != '~') {
+            do {
+                System.out.print("\nYou have entered an invalid choice. Please input the correct choice and try again.\nOptionally, you may enter the letter Y to return to your previous state.\nEnter your answer:   ");
+                returnedAnswer = scanner.nextLine().charAt(0);
+                returnedAnswer = Character.toUpperCase(returnedAnswer);
+                tryCounter++;
+            } while (returnedAnswer != returnedAnswerRightChoice && returnedAnswer != returnedAnswerRightChoice2 && returnedAnswer != returnedAnswerRightChoice3 && returnedAnswer != 'Y' && tryCounter < 5); // not an efficient method, I know that, but ultimately
+                                                                                                                                                                                     // it is better than having another method.
+        }
+        else {
+            do {
+                System.out.print("\nYou have entered an invalid choice. Please input the correct choice and try again.\nOptionally, you may enter the letter Y to return to your previous state.\nEnter your answer:   ");
+                returnedAnswer = scanner.nextLine().charAt(0);
+                returnedAnswer = Character.toUpperCase(returnedAnswer);
+                tryCounter++;
+            } while (returnedAnswer != returnedAnswerRightChoice && returnedAnswer != returnedAnswerRightChoice2 && returnedAnswer != 'Y' && tryCounter < 5);
+        }
+
+        if (returnedAnswer == returnedAnswerRightChoice || returnedAnswer == returnedAnswerRightChoice2) {
+            tryCounter = 0;
+        }
+        else if (returnedAnswerRightChoice3 != '~' && returnedAnswer == returnedAnswerRightChoice3) {
+            tryCounter = 0;
+        }
+
+        if (tryCounter == 5) {
+            System.out.print("\nYou have entered " + tryCounter + " consecutive wrong inputs. Do you wish to continue from the start? Y/N?:  ");
+            retryConfirm = scanner.nextLine().charAt(0);
+            retryConfirm = Character.toUpperCase(retryConfirm);
+                switch (retryConfirm) {
+                    case 'Y':
+                        System.out.println("\nRestarting...");
+                        main(new String[0]);
+                        break;
+                    case 'N':
+                        System.out.println("\nAborting...");
+                        exitMethod(scanner);
+                        break;
+                    default:
+                        do {
+                            System.out.print("Please enter a valid input to restart / not restart the program Y/N:  ");
+                            retryConfirm = scanner.nextLine().charAt(0);
+                            retryConfirm = Character.toUpperCase(retryConfirm);
+                            tryCounter++;
+                        } while (tryCounter < 10 && retryConfirm != 'Y' && retryConfirm != 'N');
+
+                        if (retryConfirm == 'Y') {
+                                System.out.println("\nRestarting...");
+                                main(new String[0]);
+                        }
+                        else if (retryConfirm == 'N') {
+                            System.out.println("\nAborting...");
+                            exitMethod(scanner);
+                        }
+                        else {
+                                System.out.println("\nForcefully Aborting due to multiple invalid inputs... Please restart the program manually.");
+                                exitMethod(scanner);
+                        }
+                        break;
+                }
+            }
+        else {
+            if (returnedAnswer == 'R' || returnedAnswer == 'C' || returnedAnswer == 'I') {
+                System.out.println("Thank you for answering correctly.\n");
+                whatPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+                }
+            else if (returnedAnswer == 'S' || returnedAnswer == 'T') {
+                System.out.println("Thank you for answering correctly.\n");
+                answerPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+                }
+            else if (returnedAnswer == '1' || returnedAnswer == '2' || returnedAnswer == '3') {
+                System.out.println("Thank you for answering correctly.\n");
+                answerRange(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3,customerType, customerTypePhase, customerTypeUsageRange, scanner, fixedCharge);
+                }
+            else {
+                if (returnedAnswerRightChoice == 'R') {
+                    whatCustomer(returnedAnswer, returnedAnswerRightChoice, returnedAnswerRightChoice2, returnedAnswerRightChoice3, scanner, customerType, customerTypePhase, customerTypeUsageRange, fixedCharge);
+                    }
+                else if (returnedAnswerRightChoice == 'S') {
+                    whatPhase(returnedAnswer, scanner, customerType, customerTypeUsageRange);
+                    }
+                else {
+                    usageRange(returnedAnswer, scanner, customerType, customerTypePhase, fixedCharge);
+                    }
+                }
+            }
+    } // Method bracket for wrongInput
+    static void exitMethod(Scanner scanner) {
+
+        System.out.print("\nThank you for using our service. Come again later!");
+        scanner.close();
+
+    } // method bracket for exitMethod
+} // EOF - Bracket is for Class
+
+// Bugs: Scanner leak / another instance would run if you fail method answerRange method 5+ times and declined option to restart. I don't know where the source of this is.
